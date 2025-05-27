@@ -1,0 +1,4 @@
+.env
+viajaai.db
+__pycache__/
+venv/

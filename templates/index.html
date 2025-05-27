@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>ViajaAí</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/static/img/favicon.png">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url("/static/img/fundo.png") no-repeat center center fixed;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: brightness(0.85);
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    h1 { font-size: 2.2rem; margin-bottom: 0.5em; }
+    p { font-size: 1.1rem; margin-bottom: 20px; }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #00c9ff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover { background-color: #00a0cc; }
+
+    .sucesso {
+      background-color: #e0ffe5;
+      border: 1px solid #00a35a;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+      color: #007d43;
+      text-align: center;
+    }
+
+    .compartilhar {
+      background-color: #25d366;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .compartilhar img {
+      height: 20px;
+      margin-right: 10px;
+    }
+
+    .floating-whatsapp {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25d366;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      cursor: pointer;
+    }
+
+    .floating-whatsapp img {
+      width: 30px;
+      height: 30px;
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.8rem; }
+      p { font-size: 1rem; }
+      .container { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ViajaAí</h1>
+    <p>Onde férias e trabalho viram destino</p>
+
+    {% if sucesso %}
+    <div class="sucesso">Cadastro realizado com sucesso! ✅</div>
+    {% endif %}
+
+    <form method="POST" action="/cadastro">
+      <label for="nome">Nome completo:</label>
+      <input type="text" name="nome" required>
+
+      <label for="telefone">WhatsApp (com DDD):</label>
+      <input type="text" name="telefone" placeholder="Ex: 61991234567" required>
+
+      <label for="origem">Cidade de origem:</label>
+      <input type="text" name="origem" required>
+
+      <label for="destino">Destino desejado:</label>
+      <input type="text" name="destino" required>
+
+      <label for="data">Data da viagem:</label>
+      <input type="date" name="data" required>
+
+      <label for="preco_max">Preço máximo desejado (R$):</label>
+      <input type="number" name="preco_max" step="0.01" required>
+
+      <button type="submit">Cadastrar Alerta</button>
+    </form>
+
+    <a class="compartilhar" href="https://wa.me/?text=Veja%20esse%20app%20de%20alertas%20de%20passagens%20aéreas%20-%20ViajaAí:%20https://tech360c.github.io/viajaai" target="_blank">
+      <img src="/static/img/whatsapp.png" alt="WhatsApp"> Compartilhar no WhatsApp
+    </a>
+  </div>
+
+  <!-- Botão flutuante do WhatsApp -->
+  <a class="floating-whatsapp"
+     href="https://wa.me/?text=Veja%20esse%20app%20de%20alertas%20de%20passagens%20aéreas%20-%20ViajaAí:%20https://tech360c.github.io/viajaai"
+     target="_blank">
+    <img src="/static/img/whatsapp.png" alt="WhatsApp">
+  </a>
+</body>
+</html>
