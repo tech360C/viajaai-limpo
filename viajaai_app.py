@@ -9,24 +9,25 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Carrega as variáveis do arquivo .env
+# Carrega variáveis de ambiente
 load_dotenv()
 
 app = Flask(__name__)
 
-# Configurações do Twilio
-TWILIO_SID = os.getenv('TWILIO_SID', 'SEU_TWILIO_SID')
-TWILIO_TOKEN = os.getenv('TWILIO_TOKEN', 'SEU_TWILIO_TOKEN')
+# Twilio
+TWILIO_SID = os.getenv('TWILIO_SID')
+TWILIO_TOKEN = os.getenv('TWILIO_TOKEN')
 TWILIO_NUMBER = 'whatsapp:+14155238886'
 client = Client(TWILIO_SID, TWILIO_TOKEN)
 
-# Configuração do marcador (affiliate marker) da Travelpayouts
-AFFILIATE_MARKER = os.getenv('AFFILIATE_MARKER', 'SEU_MARKER_AQUI')
+# Travelpayouts
+AFFILIATE_MARKER = os.getenv('AFFILIATE_MARKER')
 
 # Banco de dados SQLite
 conn = sqlite3.connect('viajaai.db', check_same_thread=False)
 cursor = conn.cursor()
-cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
     telefone TEXT,
@@ -34,7 +35,8 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
     destino TEXT,
     data TEXT,
     preco_max REAL
-)''')
+)
+''')
 conn.commit()
 
 @app.route('/')
@@ -55,7 +57,7 @@ def buscar_promocao(origem, destino, data):
     try:
         url = "https://api.travelpayouts.com/aviasales/v3/prices_for_dates"
         headers = {
-            "x-access-token": os.getenv('TRAVELPAYOUTS_TOKEN', 'SEU_TOKEN_AQUI')
+            "x-access-token": os.getenv('TRAVELPAYOUTS_TOKEN')
         }
         params = {
             "origin": origem.upper(),
@@ -98,8 +100,15 @@ def verificar_promocoes():
             msg = f"Olá {nome}, encontramos uma promoção de {origem} para {destino} por R$ {preco:.2f}!\nGaranta agora: {link}"
             enviar_alerta(telefone, msg)
 
-# Inicia o agendador assim que o app carrega
-t = threading.Thread(target=lambda: (schedule.every(6).hours.do(verificar_promocoes),
-                                     [schedule.run_pending() or time.sleep(1) for _ in iter(int, 1)]))
-t.daemon = True
-t.start()
+def start_scheduler():
+    schedule.every(6).hours.do(verificar_promocoes)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Inicia o agendador em background
+scheduler_thread = threading.Thread(target=start_scheduler, daemon=True)
+scheduler_thread.start()
+
+# Expõe a variável app para o Gunicorn no Render
+app = app
